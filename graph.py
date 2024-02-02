@@ -37,7 +37,7 @@ def list_of_neighbours(s):
     if position_of_0 // n != 0:
         neighbours.append(swap(s, position_of_0, position_of_0 - n))
     if position_of_0 // n != n - 1:
-        neighbours.append(swap(s, position_of_0, position_of_0 + 1))
+        neighbours.append(swap(s, position_of_0, position_of_0 + n))
     return neighbours
 
 
