@@ -1,29 +1,26 @@
+import heapq
+
 n = 3
 
-def h0(S1, S2):         #Une heuristique naïve
+
+def h0(S1, S2):  # Une heuristique naïve
     res = 0
-    for i in range(n*n):
-        res += (S1[i] != S2[i])   #Sommer des booléens impose de les convertir en int
+    for i in range(n * n):
+        res += S1[i] != S2[i]  # Sommer des booléens impose de les convertir en int
     return res
 
-def h1(S1, S2):
+
+def h1(S1, S2):  # Somme des distances des chiffres
     loc1 = {}
     loc2 = {}
-    for i in range(n*n):
-        loc1[S1[i]] = [i//n, i%n]
-        loc2[S2[i]] = [i//n, i%n]
+    for i in range(n * n):
+        loc1[S1[i]] = [i // n, i % n]
+        loc2[S2[i]] = [i // n, i % n]
     res = 0
-    for j in range(n*n):
+    for j in range(n * n):
         res += abs(loc1[j][0] - loc2[j][0]) + abs(loc1[j][1] - loc2[j][1])
-    return res 
+    return res
 
-S1 = [0,1,2,3,4,5,6,7,8]
-S2 = [1,6,8,7,5,2,3,4,0]
-
-print(h0(S1,S2))
-print(h1(S1,S2))
-
-import heapq
 
 def astar(start, goal, graph, heuristic):
     """
@@ -63,14 +60,26 @@ def astar(start, goal, graph, heuristic):
             tentative_g_score = g_scores[current] + 1
             # Add neighbor to open list if not already in it.
             if neighbor not in [n[1] for n in open_list]:
-                heapq.heappush(open_list, (tentative_g_score + heuristic(neighbor, goal), neighbor))
+                heapq.heappush(
+                    open_list, (tentative_g_score + heuristic(neighbor, goal), neighbor)
+                )
             # Update neighbor's g-score if new path is better.
             elif tentative_g_score < g_scores[neighbor]:
                 index = [n[1] for n in open_list].index(neighbor)
-                open_list[index] = (tentative_g_score + heuristic(neighbor, goal), neighbor)
+                open_list[index] = (
+                    tentative_g_score + heuristic(neighbor, goal),
+                    neighbor,
+                )
             # Update parent and g-score.
             parents[neighbor] = current
             g_scores[neighbor] = tentative_g_score
     # No path found.
     return None
 
+
+if __name__ == "__main__":
+    S1 = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    S2 = [1, 6, 8, 7, 5, 2, 3, 4, 0]
+
+    print(h0(S1, S2))
+    print(h1(S1, S2))
