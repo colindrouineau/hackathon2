@@ -5,7 +5,6 @@ n=3
 
 
 def show_situation(situation):
-    print(situation)
     global screen
     for i in range(n**2):
         if(situation[i]!=0):
@@ -25,17 +24,22 @@ def show_previous_situation(e):
     current-=1
     show_situation(game_situations[current])
 
-initial_situation = ""
+def show_game_state(situation):
+    for i in range(len(screen_game)):
+        screen_game[i].text = situation[i]
+        screen_game[i].update()
+
+situation = ""
 reachable=True
 path=[]
 
 def submit_situation(e):
+    global situation
     L=[]
     for field in params:
         L.append(field.value)
     if [] not in L:
-        initial_situation = ''.join(L)
-        print(initial_situation)
+        situation = ''.join(L)
     
     #récuperer la validité et le chemin dans game_situations
     if not reachable:
@@ -44,6 +48,33 @@ def submit_situation(e):
     else:
         visu.value = "Visualisation de la solution"
         visu.update()
+        show_game_state(situation)
+
+
+def game(e):
+    global situation
+    i=int(situation.find("0"))
+    print(situation)
+    situation_list=list(situation)
+    if(e.control.text == "Haut"):
+        if(i>=3):
+            situation_list[i], situation_list[i-3] = situation_list[i-3], situation_list[i]
+    if(e.control.text == "Bas"):
+        if(i<=5):
+            situation_list[i], situation_list[i+3] = situation_list[i+3], situation_list[i]
+    if(e.control.text == "Droite"):
+        if((i+1)%3 != 0):
+            situation_list[i], situation_list[i+1] = situation_list[i+1], situation_list[i]
+    if(e.control.text == "Gauche"):
+        if((i+1)%3 != 1):
+            situation_list[i], situation_list[i-1] = situation_list[i-1], situation_list[i]
+    
+    situation="".join(situation_list)
+    show_game_state(situation)
+
+
+    
+
     
 
 
@@ -64,7 +95,18 @@ params=[]
 for i in range(n**2):
     params.append(ft.TextField(label = "Number"))
 
-visu = ft.TextField(value = "Visualisation de la solution")
+visu = ft.Text("Visualisation de la solution")
+
+screen_game = []
+
+for i in range(n**2):
+    screen_game.append(ft.TextButton(text = game_situations[current][i]))
+
+up = ft.TextButton(text="Haut", on_click = game)
+down = ft.TextButton(text="Bas", on_click = game)
+right = ft.TextButton(text="Droite", on_click = game)
+left = ft.TextButton(text="Gauche", on_click = game)
+
 
 
 
@@ -75,7 +117,7 @@ def main(page: ft.Page):
     page.add(
 
         ft.Row([
-            ft.TextField(value = "Implémentation de point de départ")
+            ft.Text("Implémentation de point de départ")
         ]),
 
         ft.Row(
@@ -102,7 +144,11 @@ def main(page: ft.Page):
         ft.Row(screen[6:9]),
         ft.Row([prev, next]),
 
-
+        ft.Row([ft.Text("A toi de jouer !")]),
+        ft.Row(screen_game[0:3]),
+        ft.Row(screen_game[3:6]),
+        ft.Row(screen_game[6:9]),
+        ft.Row([up, down, right, left])
     )
 
 ft.app(target=main)
